@@ -49,25 +49,26 @@ rho_e.choked = p_e.choked/R./T_e;
 
 Thrust = array2table((p_e{:,:}-p_amb+V_e{:,:}.^2.*rho_e{:,:})*A);
 
+%% imp2metric
 V_e = varfun(@(x) x*0.3048, V_e);
 rho_e = varfun(@(x) x*515.37882, rho_e);
 Thrust = varfun(@(x) x*4.4482216, Thrust);
+% p_e = varfun(@(x) x*47.88, p_e);
 V_e.Properties.VariableNames = {'Bernoulli','isentropic','choked'};
 rho_e.Properties.VariableNames = {'Bernoulli','isentropic','choked'};
 Thrust.Properties.VariableNames = {'Bernoulli','isentropic','choked'};
+% p_e.Properties.VariableNames = {'Bernoulli','isentropic','choked'};
 self.Load = self.Load*4.4482216;
 
 
 %%
 figure(1), clf
+grid on
 hold on
 plot(self.p_t, M_e, 'LineStyle', '-', 'LineWidth', 0.75,...
     'Marker', '^', 'MarkerSize', 5,...
     'Color', 'blue', 'MarkerFaceColor', 'blue')
-plot(self.p_t(M_1>0.9), M_1(M_1>0.9), 'LineStyle', '--',...
-    'Color', 'blue', 'LineWidth', 0.75, 'Marker', '^', 'MarkerSize', 5)
-hold off
-grid on
+
 xlim([self.p_t(1), self.p_t(end)])
 xlabel('Chamber {\itp_t} (Pa)', 'FontSize', 12)
 ylabel('\itM_e', 'FontSize', 12)
@@ -78,6 +79,14 @@ set(get(gca,'ylabel'), 'rotation', 0,...
 ax = gca;
 ax.XAxis.LineWidth = 0.75;
 ax.YAxis.LineWidth = 0.75;
+
+exportgraphics(gcf,'Mach_isen.png','Resolution',300)
+
+plot(self.p_t(M_1>0.9), M_1(M_1>0.9), 'LineStyle', '--',...
+    'Color', 'blue', 'LineWidth', 0.75, 'Marker', '^', 'MarkerSize', 5)
+hold off
+
+exportgraphics(gcf,'Mach_choked.png','Resolution',300)
 
 figure(2), clf
 hold on
@@ -105,6 +114,7 @@ ax = gca;
 ax.XAxis.LineWidth = 0.75;
 ax.YAxis.LineWidth = 0.75;
 
+exportgraphics(gcf,'Velocity.png','Resolution',300)
 
 figure(3), clf
 hold on
@@ -133,6 +143,8 @@ set(gca, 'Box', 'off', 'TickDir', 'out', 'TickLength', [.02,.02],...
 ax = gca;
 ax.XAxis.LineWidth = 0.75;
 ax.YAxis.LineWidth = 0.75;
+
+exportgraphics(gcf,'Thrust.png','Resolution',300)
 
 %% Functions
 function self = init(name, value)
